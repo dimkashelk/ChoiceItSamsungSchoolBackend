@@ -42,5 +42,24 @@ def find_email():
     return jsonify({'find': session.find_email(content['email'])})
 
 
+@app.route('/api/check_verify_code')
+def check_verify_code():
+    content = request.json
+    res = session.check_verify_code(
+        content['email'],
+        content['code'],
+        content['password']
+    )
+    if res is not None:
+        return jsonify({
+            'ok': True,
+            'token': res[0],
+            'login': res[1]
+        })
+    return jsonify({
+        'ok': False
+    })
+
+
 if __name__ == '__main__':
     app.run()

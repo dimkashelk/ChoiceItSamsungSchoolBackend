@@ -50,7 +50,7 @@ class Session:
                 token = get_hashed_password(random_word(20).encode('utf-8'))
                 user.token = token
                 self.session.commit()
-                return token
+                return token, user.login
 
     def send_code(self, email, code):
         # TODO: send code to email

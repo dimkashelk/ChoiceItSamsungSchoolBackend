@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 
 @app.route('/api/')
-def hello_world():  # put application's code here
+def hello_world():
     return 'Hello World!'
 
 

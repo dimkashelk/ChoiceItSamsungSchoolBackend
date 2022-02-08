@@ -13,14 +13,12 @@ def hello_world():
 @app.route('/api/check_login')
 def check_login():
     content = request.json
-    print(f"GETTING {content['login']} TO CHECKING IS FREE")
     return jsonify({'is_free_login': session.check_login_free(content['login'])})
 
 
 @app.route('/api/check_email')
 def check_email():
     content = request.json
-    print(f"GETTING {content['email']} TO CHECKING IS FREE")
     return jsonify({'is_free_email': session.check_email_free(content['email'])})
 
 
@@ -58,6 +56,28 @@ def check_verify_code():
         })
     return jsonify({
         'ok': False
+    })
+
+
+@app.route('/api/reg')
+def reg():
+    content = request.json
+    res = session.registration(
+        content['login'],
+        content['password'],
+        content['email'],
+        content['first_name'],
+        content['second_name']
+    )
+    if res[0] is None:
+        return jsonify({
+            'status': False,
+            'email_free': res[1],
+            'login_free': res[2]
+        })
+    return jsonify({
+        'status': True,
+        'token': res[0]
     })
 
 

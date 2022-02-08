@@ -37,7 +37,7 @@ class Session:
         user = self.session.query(User).filter(User.id == user_id).first()
         if user is None:
             return
-        token = get_hashed_password(random_word(20).encode('utf-8'))
+        token = get_hashed_password(random_word(20).encode('utf-8') + user.login)
         user.token = token
         self.session.commit()
         return token
@@ -47,7 +47,7 @@ class Session:
         if user is not None:
             if user.verify_code == code:
                 user.password = get_hashed_password(password.encode('utf-8'))
-                token = get_hashed_password(random_word(20).encode('utf-8'))
+                token = get_hashed_password(random_word(20).encode('utf-8') + user.login.encode('utf-8'))
                 user.token = token
                 self.session.commit()
                 return token, user.login
@@ -65,3 +65,19 @@ class Session:
             self.send_code(email, code)
             return True
         return False
+
+    def registration(self, login, password, email, first_name, second_name):
+        user_email = self.session.query(User).filter(User.email == email).first()
+        user_login = self.session.query(User).filter(User.login == login).first()
+        if user_email is not None or user_login is not None:
+            return None, user_email is None, user_login is None
+        user = User()
+        user.email = email
+        user.login = login
+        user.first_name = first_name
+        user.second_name = second_name
+        user.password = get_hashed_password(password.encode('utf-8'))
+        user.token = get_hashed_password(random_word(20).encode('utf-8') + user.login.encode('utf-8'))
+        self.session.add(user)
+        self.session.commit()
+        return user.token, True, True

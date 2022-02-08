@@ -81,3 +81,15 @@ class Session:
         self.session.add(user)
         self.session.commit()
         return user.token, True, True
+
+    def authorization(self, login, password):
+        if '@' in login:
+            user = self.session.query(User).filter(User.email == login).first()
+        else:
+            user = self.session.query(User).filter(User.login == login).first()
+        if user is None:
+            return
+        if check_password(password.encode('utf-8'), user.password):
+            user.token = get_hashed_password(random_word(20).encode('utf-8') + user.login.encode('utf-8'))
+            self.session.commit()
+            return user.token, user.login

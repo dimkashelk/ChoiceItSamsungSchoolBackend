@@ -27,11 +27,19 @@ def check_data():
     content = request.json
     if content.get('email', False):
         print(f"GETTING email: {content['email']} password: {content['password']} TO CHECKING AUTH")
+        res = session.authorization(content['email'], content['password'])
     else:
         print(f"GETTING login: {content['login']} password: {content['password']} TO CHECKING AUTH")
-    return jsonify({'status': 'ok',
-                    'login': 'dimkashelk',
-                    'token': hash('Hello, world!')})
+        res = session.authorization(content['login'], content['password'])
+    if res is None:
+        return jsonify({
+            'ok': False
+        })
+    return jsonify({
+        'ok': True,
+        'token': res[0],
+        'login': res[1]
+    })
 
 
 @app.route('/api/find_email')

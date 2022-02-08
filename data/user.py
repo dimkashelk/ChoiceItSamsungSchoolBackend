@@ -10,3 +10,5 @@ class User(SqlAlchemyBase):
     email = sqlalchemy.Column(sqlalchemy.String, unique=True)
     first_name = sqlalchemy.Column(sqlalchemy.String)
     second_name = sqlalchemy.Column(sqlalchemy.String)
+    verify_code = sqlalchemy.Column(sqlalchemy.INTEGER)
+    password = sqlalchemy.Column(sqlalchemy.BLOB)

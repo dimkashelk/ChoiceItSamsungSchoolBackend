@@ -51,3 +51,17 @@ class Session:
                 user.token = token
                 self.session.commit()
                 return token
+
+    def send_code(self, email, code):
+        # TODO: send code to email
+        return
+
+    def find_email(self, email):
+        user = self.session.query(User).filter(User.email == email).first()
+        if user is not None:
+            code = ''.join([str(random.randint(1, 10)) for _ in range(10)])
+            user.verify_code = code
+            self.session.commit()
+            self.send_code(email, code)
+            return True
+        return False

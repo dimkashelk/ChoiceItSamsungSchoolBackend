@@ -33,18 +33,21 @@ class Session:
         user = self.session.query(User).filter(User.email == email).first()
         return user is None
 
+    def get_token(self, user_id):
+        user = self.session.query(User).filter(User.id == user_id).first()
+        if user is None:
+            return
+        token = get_hashed_password(random_word(20).encode('utf-8'))
+        user.token = token
+        self.session.commit()
+        return token
+
     def check_verify_code(self, email, code, password: str):
         user = self.session.query(User).filter(User.email == email).first()
         if user is not None:
             if user.verify_code == code:
                 user.password = get_hashed_password(password.encode('utf-8'))
+                token = get_hashed_password(random_word(20).encode('utf-8'))
+                user.token = token
                 self.session.commit()
-
-    def get_token(self, user_id):
-        user = self.session.query(User).filter(User.id == user_id).first()
-        if user is None:
-            return
-        token = get_hashed_password(random_word(20))
-        user.token = token
-        self.session.commit()
-        return token
+                return token

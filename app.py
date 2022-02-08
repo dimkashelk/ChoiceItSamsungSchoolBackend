@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from data.session import *
 
 app = Flask(__name__)
 
@@ -35,4 +36,6 @@ def check_data():
 
 
 if __name__ == '__main__':
-    app.run()
+    token = get_hashed_password(randbytes(50))
+    print(token)
+    # app.run()

@@ -1,11 +1,14 @@
 from flask import Flask, request, jsonify
 from data.session import *
+import logging
 
 app = Flask(__name__)
 session = Session()
 
+logging.basicConfig(level=logging.INFO, filename='app.log')
 
-def presence_of_arguments(content, *args):
+
+def presence_of_arguments(content, args):
     for i in args:
         if not content.get(i, False):
             return False
@@ -20,7 +23,7 @@ def hello_world():
 @app.route('/api/check_login')
 def check_login():
     content = request.json
-    if presence_of_arguments(content, 'login'):
+    if presence_of_arguments(content, ['login']):
         return jsonify({'is_free_login': session.check_login_free(content['login'])})
     else:
         return jsonify({'status': False})
@@ -29,7 +32,7 @@ def check_login():
 @app.route('/api/check_email')
 def check_email():
     content = request.json
-    if presence_of_arguments(content, 'email'):
+    if presence_of_arguments(content, ['email']):
         return jsonify({'is_free_email': session.check_email_free(content['email'])})
     else:
         return jsonify({'status': False})
@@ -38,10 +41,10 @@ def check_email():
 @app.route('/api/auth')
 def check_data():
     content = request.json
-    if presence_of_arguments(content, 'email'):
+    if presence_of_arguments(content, ['email']):
         print(f"GETTING email: {content['email']} password: {content['password']} TO CHECKING AUTH")
         res = session.authorization(content['email'], content['password'])
-    elif presence_of_arguments(content, 'login'):
+    elif presence_of_arguments(content, ['login']):
         print(f"GETTING login: {content['login']} password: {content['password']} TO CHECKING AUTH")
         res = session.authorization(content['login'], content['password'])
     else:
@@ -60,7 +63,7 @@ def check_data():
 @app.route('/api/find_email')
 def find_email():
     content = request.json
-    if presence_of_arguments(content, 'email'):
+    if presence_of_arguments(content, ['email']):
         return jsonify({'find': session.find_email(content['email'])})
     else:
         return jsonify({'status': False})
@@ -69,7 +72,7 @@ def find_email():
 @app.route('/api/check_verify_code')
 def check_verify_code():
     content = request.json
-    if not presence_of_arguments(content, 'email', 'code', 'password'):
+    if not presence_of_arguments(content, ['email', 'code', 'password']):
         return jsonify({
             'ok': False
         })
@@ -92,7 +95,7 @@ def check_verify_code():
 @app.route('/api/reg')
 def reg():
     content = request.json
-    if not presence_of_arguments(content, 'email', 'first_name', 'password', 'login', 'second_name'):
+    if not presence_of_arguments(content, ['email', 'first_name', 'password', 'login', 'second_name']):
         return jsonify({
             'status': False
         })

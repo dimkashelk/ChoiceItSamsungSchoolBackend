@@ -22,7 +22,7 @@ def random_word(length):
 class Session:
 
     def __init__(self):
-        db_session.global_init('./db/db.db')
+        db_session.global_init('/home/dimkashelk/ChoiceItSamsungSchoolBackend/db/db.db')
         self.session = db_session.create_session()
 
     def check_login_free(self, login) -> bool:

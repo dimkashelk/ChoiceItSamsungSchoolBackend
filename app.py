@@ -5,7 +5,7 @@ import logging
 app = Flask(__name__)
 session = Session()
 
-logging.basicConfig(level=logging.INFO, filename='app.log')
+logging.basicConfig(level=logging.INFO, filename='/var/log/choiceit/app.log')
 
 
 def presence_of_arguments(content, args):
@@ -15,12 +15,12 @@ def presence_of_arguments(content, args):
     return True
 
 
-@app.route('/api/')
+@app.route('/api/', methods=['POST', 'GET'])
 def hello_world():
     return 'Hello World!'
 
 
-@app.route('/api/check_login')
+@app.route('/api/check_login', methods=['POST', 'GET'])
 def check_login():
     content = request.json
     if presence_of_arguments(content, ['login']):
@@ -29,7 +29,7 @@ def check_login():
         return jsonify({'status': False})
 
 
-@app.route('/api/check_email')
+@app.route('/api/check_email', methods=['POST', 'GET'])
 def check_email():
     content = request.json
     if presence_of_arguments(content, ['email']):
@@ -38,7 +38,7 @@ def check_email():
         return jsonify({'status': False})
 
 
-@app.route('/api/auth')
+@app.route('/api/auth', methods=['POST', 'GET'])
 def check_data():
     content = request.json
     if presence_of_arguments(content, ['email']):
@@ -60,7 +60,7 @@ def check_data():
     })
 
 
-@app.route('/api/find_email')
+@app.route('/api/find_email', methods=['POST', 'GET'])
 def find_email():
     content = request.json
     if presence_of_arguments(content, ['email']):
@@ -69,7 +69,7 @@ def find_email():
         return jsonify({'status': False})
 
 
-@app.route('/api/check_verify_code')
+@app.route('/api/check_verify_code', methods=['POST', 'GET'])
 def check_verify_code():
     content = request.json
     if not presence_of_arguments(content, ['email', 'code', 'password']):
@@ -92,7 +92,7 @@ def check_verify_code():
     })
 
 
-@app.route('/api/reg')
+@app.route('/api/reg', methods=['POST', 'GET'])
 def reg():
     content = request.json
     if not presence_of_arguments(content, ['email', 'first_name', 'password', 'login', 'second_name']):

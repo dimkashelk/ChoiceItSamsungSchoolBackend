@@ -120,3 +120,21 @@ def reg():
 
 if __name__ == '__main__':
     app.run()
+
+# TODO: /api/friends POST login, token - load friends list
+# TODO: /api/user POST login, token - load user info
+# TODO: /api/user_news_feed POST login, token, friends (LIST<String>), min_count, max_count, is_increasing_most_popular,
+#  is_increasing_active, is_increasing_date - load user news feed
+# TODO: /api/load_person POST login, token, person (id) - load person by id
+# TODO: /api/load_search_person POST login, token, person (name) - search person by name
+# TODO: /api/search POST login, token, value, search_persons, search_surveys, search_friends_surveys, age_from, age_to,
+#  count_question_from, count_question_to - search surveys and persons by name
+# TODO: /api/images/{person_id} POST login, token, is_profile - load user profile image
+# TODO: /api/user_surveys/{survey_id} POST login, token, is_title - load survey title image
+# TODO: /api/load_person/{person_id} POST login, token, profile - load user image
+# TODO: /api/load_survey/{survey_id} POST login, token, survey - load survey title image
+# TODO: /api/save_res_survey POST login, token, survey {survey_id, spots {spot_id, place}} - save results of survey
+# TODO: /api/update_user_data POST new_login, first_name, second_name, login, token, old_password (option),
+#  new password (option), new_profile_image (option) - update user info
+# TODO: /api/upload_survey POST login, token, images (list), to_date, add_to_favorites, only_for_friends,
+#  anonymous_statistic,  send_to_friends, title, description - upload survey to server

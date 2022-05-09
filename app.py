@@ -197,6 +197,25 @@ def load_person_image(person_id):
     )
 
 
+@app.route('/api/user_surveys/<int:survey_id>', methods=['POST'])
+def load_survey_image(survey_id):
+    content = request.json
+    if not presence_of_arguments(content, ['login', 'token']):
+        return jsonify({
+            'status': False
+        })
+    if not session.check_token(login=content['login'], token=content['token']):
+        return jsonify({
+            'status': False
+        })
+    return send_from_directory(
+        './db/images/survey/',
+        f'{survey_id}' + '_title.png',
+        as_attachment=True,
+        attachment_filename='title.png'
+    )
+
+
 if __name__ == '__main__':
     app.run()
 
@@ -204,7 +223,6 @@ if __name__ == '__main__':
 #  is_increasing_active, is_increasing_date - load user news feed
 # TODO: /api/search POST login, token, value, search_persons, search_surveys, search_friends_surveys, age_from, age_to,
 #  count_question_from, count_question_to - search surveys and persons by name
-# TODO: /api/user_surveys/{survey_id} POST login, token, is_title - load survey title image
 # TODO: /api/load_person/{person_id} POST login, token, profile - load user image
 # TODO: /api/load_survey/{survey_id} POST login, token, survey - load survey title image
 # TODO: /api/save_res_survey POST login, token, survey {survey_id, spots {spot_id, place}} - save results of survey

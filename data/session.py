@@ -37,7 +37,7 @@ class Session:
         user = self.session.query(User).filter(User.id == user_id).first()
         if user is None:
             return
-        token = get_hashed_password(random_word(20).encode('utf-8') + user.login)
+        token = str(get_hashed_password(random_word(20).encode('utf-8') + user.login))
         user.token = token
         self.session.commit()
         return token
@@ -97,4 +97,8 @@ class Session:
     def check_token(self, login, token):
         user = self.session.query(User).filter(User.login == login).first()
         return user.token == token
+
+    def load_friends(self, login):
+        user = self.session.query(User).filter(User.login == login).first()
+        self.session.query()
 

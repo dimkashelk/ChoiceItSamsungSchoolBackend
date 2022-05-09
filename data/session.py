@@ -93,3 +93,8 @@ class Session:
             user.token = get_hashed_password(random_word(20).encode('utf-8') + user.login.encode('utf-8'))
             self.session.commit()
             return user.token, user.login
+
+    def check_token(self, login, token):
+        user = self.session.query(User).filter(User.login == login).first()
+        return user.token == token
+

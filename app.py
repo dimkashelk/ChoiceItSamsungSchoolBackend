@@ -178,7 +178,7 @@ def load_search_person():
     return jsonify(res)
 
 
-@app.route('/api/images/{person_id}', methods=['POST'])
+@app.route('/api/images/<int:person_id>', methods=['POST'])
 def load_person_image(person_id):
     content = request.json
     if not presence_of_arguments(content, ['login', 'token']):

@@ -11,5 +11,5 @@ class User(SqlAlchemyBase):
     first_name = sqlalchemy.Column(sqlalchemy.String)
     second_name = sqlalchemy.Column(sqlalchemy.String)
     verify_code = sqlalchemy.Column(sqlalchemy.INTEGER)
-    password = sqlalchemy.Column(sqlalchemy.String)
-    token = sqlalchemy.Column(sqlalchemy.String)
+    password = sqlalchemy.Column(sqlalchemy.BLOB)
+    token = sqlalchemy.Column(sqlalchemy.BLOB)

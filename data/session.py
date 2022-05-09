@@ -4,6 +4,8 @@ import string
 
 from data import db_session
 from data.user import User
+from data.friends_list import Friends
+from data.survey import Survey
 
 
 def get_hashed_password(plain_text_password):
@@ -37,7 +39,7 @@ class Session:
         user = self.session.query(User).filter(User.id == user_id).first()
         if user is None:
             return
-        token = str(get_hashed_password(random_word(20).encode('utf-8') + user.login))
+        token = get_hashed_password(random_word(20).encode('utf-8') + user.login)
         user.token = token
         self.session.commit()
         return token
@@ -99,6 +101,22 @@ class Session:
         return user.token == token
 
     def load_friends(self, login):
+        res = {}
         user = self.session.query(User).filter(User.login == login).first()
-        self.session.query()
+        friends = self.session.query(Friends).filter(Friends.id_first == user.id)
+        res['count'] = len(friends)
+        res['friends'] = []
+        for row in friends:
+            c_user = self.session.query(User).filter(User.id == row.id_first).first()
+            count_surveys = self.session.query(Survey).filter(Survey.create_by == c_user.id)
+            count_friends = self.session.query(Friends).filter(Friends.id_first == c_user.id)
+            res['friends'].append({
+                'id': c_user.id,
+                'first_name': c_user.first_name,
+                'second_name': c_user.second_name,
+                'age': 0,
+                'count_surveys': len(count_surveys),
+                'count_friends': len(count_friends)
+            })
+        return res
 

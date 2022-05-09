@@ -118,6 +118,21 @@ def reg():
     })
 
 
+@app.route('/api/friends', methods=['POST'])
+def load_friends():
+    content = request.json
+    if not presence_of_arguments(content, ['login', 'token']):
+        return jsonify({
+            'status': False
+        })
+    if not session.check_token(login=content['login'], token=content['token']):
+        return jsonify({
+            'status': False
+        })
+    res = session.load_friends(content['login'])
+    return jsonify(res)
+
+
 if __name__ == '__main__':
     app.run()
 

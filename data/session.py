@@ -7,6 +7,9 @@ from data.user import User
 from data.friends_list import Friends
 from data.survey import Survey
 
+from sqlalchemy.sql import expression, functions
+from sqlalchemy import types
+
 
 def get_hashed_password(plain_text_password):
     return bcrypt.hashpw(plain_text_password, bcrypt.gensalt())
@@ -144,4 +147,13 @@ class Session:
         res['second_name'] = user.second_name
         res['count_friends'] = len(friends)
         res['count_surveys'] = len(surveys)
+        return res
+
+    def load_search_person(self, person_name):
+        res = {}
+        users = self.session.query(User).filter((User.first_name + User.second_name).like(f'%{person_name}%'))
+        res['count'] = len(users)
+        res['persons'] = []
+        for row in users:
+            res['persons'].append(self.load_person(row.id))
         return res

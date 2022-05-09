@@ -216,6 +216,25 @@ def load_survey_image(survey_id):
     )
 
 
+@app.route('/api/load_person/<int:person_id>', methods=['POST'])
+def load_person_image(person_id):
+    content = request.json
+    if not presence_of_arguments(content, ['login', 'token']):
+        return jsonify({
+            'status': False
+        })
+    if not session.check_token(login=content['login'], token=content['token']):
+        return jsonify({
+            'status': False
+        })
+    return send_from_directory(
+        './db/images/profile/',
+        f'{person_id}' + '_profile.png',
+        as_attachment=True,
+        attachment_filename='profile.png'
+    )
+
+
 if __name__ == '__main__':
     app.run()
 

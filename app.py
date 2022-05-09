@@ -133,10 +133,24 @@ def load_friends():
     return jsonify(res)
 
 
+@app.route('/api/user', methods=['POST'])
+def load_user_info():
+    content = request.json
+    if not presence_of_arguments(content, ['login', 'token']):
+        return jsonify({
+            'status': False
+        })
+    if not session.check_token(login=content['login'], token=content['token']):
+        return jsonify({
+            'status': False
+        })
+    res = session.load_user_info(content['login'])
+    return jsonify(res)
+
+
 if __name__ == '__main__':
     app.run()
 
-# TODO: /api/user POST login, token - load user info
 # TODO: /api/user_news_feed POST login, token, friends (LIST<String>), min_count, max_count, is_increasing_most_popular,
 #  is_increasing_active, is_increasing_date - load user news feed
 # TODO: /api/load_person POST login, token, person (id) - load person by id

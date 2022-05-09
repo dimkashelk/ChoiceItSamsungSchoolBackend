@@ -120,3 +120,15 @@ class Session:
             })
         return res
 
+    def load_user_info(self, login):
+        res = {}
+        user = self.session.query(User).filter(User.login == login).first()
+        friends = self.session.query(Friends).filter(Friends.id_first == user.id)
+        surveys = self.session.query(Survey).filter(Survey.create_by == user.id)
+        res['id'] = user.id
+        res['login'] = user.login
+        res['first_name'] = user.first_name
+        res['second_name'] = user.second_name
+        res['count_friends'] = len(friends)
+        res['count_surveys'] = len(surveys)
+        return res

@@ -136,7 +136,6 @@ def load_friends():
 if __name__ == '__main__':
     app.run()
 
-# TODO: /api/friends POST login, token - load friends list
 # TODO: /api/user POST login, token - load user info
 # TODO: /api/user_news_feed POST login, token, friends (LIST<String>), min_count, max_count, is_increasing_most_popular,
 #  is_increasing_active, is_increasing_date - load user news feed

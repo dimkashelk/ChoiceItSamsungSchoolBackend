@@ -1,14 +1,16 @@
+import io
+
 import bcrypt
 import random
 import string
+import base64
+from PIL import Image
 
 from data import db_session
 from data.user import User
 from data.friends_list import Friends
 from data.survey import Survey
-
-from sqlalchemy.sql import expression, functions
-from sqlalchemy import types
+from data.spot import Spot
 
 
 def get_hashed_password(plain_text_password):
@@ -27,7 +29,7 @@ def random_word(length):
 class Session:
 
     def __init__(self):
-        db_session.global_init('/home/dimkashelk/ChoiceItSamsungSchoolBackend/db/db.db')
+        db_session.global_init('C:\\Users\\shelk\\PycharmProjects\\ChoiceItSamsungSchoolBackend\\db\\db.db')
         self.session = db_session.create_session()
 
     def check_login_free(self, login) -> bool:
@@ -97,7 +99,7 @@ class Session:
         if check_password(password.encode('utf-8'), user.password):
             user.token = get_hashed_password(random_word(20).encode('utf-8') + user.login.encode('utf-8'))
             self.session.commit()
-            return user.token, user.login
+            return str(user.token), user.login
 
     def check_token(self, login, token):
         user = self.session.query(User).filter(User.login == login).first()
@@ -157,3 +159,30 @@ class Session:
         for row in users:
             res['persons'].append(self.load_person(row.id))
         return res
+
+    def upload_survey(self, content):
+        user = self.session.query(User).filter(User.login == content['login']).first()
+        survey = Survey()
+        survey.create_by = user.id
+        survey.title = content['title']
+        survey.description = content['description']
+        survey.is_archive = False
+        survey.is_favorites = content['add_to_favorites']
+        survey.only_for_friends = content['only_for_friends']
+        survey.to_date = content['to_date']
+        self.session.add(survey)
+        self.session.commit()
+        for i in content['images']:
+            spot = Spot()
+            spot.title = i['title']
+            spot.id_survey = survey.id
+            self.session.add(spot)
+            self.session.commit()
+            img_bytes = base64.b64decode(i['image'].encode('utf-8'))
+            img = Image.open(io.BytesIO(img_bytes))
+            img.save('C:\\Users\\shelk\\PycharmProjects\\ChoiceItSamsungSchoolBackend\\db\\images\\spots\\' + str(spot.id) + '.png')
+        return {'status': True}
+
+    def check_auth_token(self, login, token):
+        user = self.session.query(User).filter(User.login == login).first()
+        return str(user.token) == token

@@ -5,12 +5,13 @@ import logging
 app = Flask(__name__)
 session = Session()
 
-logging.basicConfig(level=logging.INFO, filename='/var/log/choiceit/app.log')
+
+# logging.basicConfig(level=logging.INFO, filename='./app.log')
 
 
 def presence_of_arguments(content, args):
     for i in args:
-        if not content.get(i, False):
+        if i not in content:
             return False
     return True
 
@@ -217,7 +218,7 @@ def load_survey_image(survey_id):
 
 
 @app.route('/api/load_person/<int:person_id>', methods=['POST'])
-def load_person_image(person_id):
+def load_image(person_id):
     content = request.json
     if not presence_of_arguments(content, ['login', 'token']):
         return jsonify({
@@ -236,7 +237,7 @@ def load_person_image(person_id):
 
 
 @app.route('/api/load_survey/<int:survey_id>', methods=['POST'])
-def load_survey_image(survey_id):
+def load_survey_image_(survey_id):
     content = request.json
     if not presence_of_arguments(content, ['login', 'token']):
         return jsonify({
@@ -254,6 +255,30 @@ def load_survey_image(survey_id):
     )
 
 
+@app.route('/api/upload_survey', methods=['POST'])
+def upload_survey():
+    content = request.json
+    if not presence_of_arguments(content, ['login',
+                                           'token',
+                                           'images',
+                                           'to_date',
+                                           'add_to_favorites',
+                                           'only_for_friends',
+                                           'anonymous_statistic',
+                                           'send_to_friends',
+                                           'title',
+                                           'description']):
+        return jsonify({
+            'status': False
+        })
+    if not session.check_auth_token(login=content['login'], token=content['token']):
+        return jsonify({
+            'status': False
+        })
+    res = session.upload_survey(content)
+    return jsonify(res)
+
+
 if __name__ == '__main__':
     app.run()
 
@@ -264,5 +289,3 @@ if __name__ == '__main__':
 # TODO: /api/save_res_survey POST login, token, survey {survey_id, spots {spot_id, place}} - save results of survey
 # TODO: /api/update_user_data POST new_login, first_name, second_name, login, token, old_password (option),
 #  new password (option), new_profile_image (option) - update user info
-# TODO: /api/upload_survey POST login, token, images (list), to_date, add_to_favorites, only_for_friends,
-#  anonymous_statistic,  send_to_friends, title, description - upload survey to server

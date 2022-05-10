@@ -1,4 +1,5 @@
 import io
+import os
 
 import bcrypt
 import random
@@ -186,3 +187,24 @@ class Session:
     def check_auth_token(self, login, token):
         user = self.session.query(User).filter(User.login == login).first()
         return str(user.token) == token
+
+    def update_user_data(self, content):
+        res = {}
+        user = self.session.query(User).filter(User.login == content['login']).first()
+        if 'new_profile_image' in content:
+            if os.path.isfile(f'../db/images/profile/{user.login}.png'):
+                os.remove(f'../db/images/profile/{user.login}.png')
+            img_bytes = base64.b64decode(content['new_profile_image'].encode('utf-8'))
+            img = Image.open(io.BytesIO(img_bytes))
+            img.save('C:\\Users\\shelk\\PycharmProjects\\ChoiceItSamsungSchoolBackend\\db\\images\\profile\\' + str(user.login) + '.png')
+        user.login = content['new_login']
+        user.first_name = content['first_name']
+        user.second_name = content['second_name']
+        if 'new_password' in content:
+            user.password = get_hashed_password(content['new_password'].encode('utf-8'))
+            user.token = get_hashed_password(random_word(20).encode('utf-8') + user.login.encode('utf-8'))
+        self.session.query(User).update(user)
+        self.session.commit()
+        res['login'] = user.login
+        res['token'] = user.token
+        return res

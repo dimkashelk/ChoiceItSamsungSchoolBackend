@@ -279,6 +279,21 @@ def upload_survey():
     return jsonify(res)
 
 
+@app.route('/api/update_user_data', methods=['POST'])
+def update_user_data():
+    content = request.json
+    if not presence_of_arguments(content, ['new_login', 'first_name', 'second_name', 'login', 'token']):
+        return jsonify({
+            'status': False
+        })
+    if not session.check_auth_token(login=content['login'], token=content['token']):
+        return jsonify({
+            'status': False
+        })
+    res = session.update_user_data(content)
+    return jsonify(res)
+
+
 if __name__ == '__main__':
     app.run()
 
@@ -287,5 +302,3 @@ if __name__ == '__main__':
 # TODO: /api/search POST login, token, value, search_persons, search_surveys, search_friends_surveys, age_from, age_to,
 #  count_question_from, count_question_to - search surveys and persons by name
 # TODO: /api/save_res_survey POST login, token, survey {survey_id, spots {spot_id, place}} - save results of survey
-# TODO: /api/update_user_data POST new_login, first_name, second_name, login, token, old_password (option),
-#  new password (option), new_profile_image (option) - update user info

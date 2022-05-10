@@ -5,7 +5,6 @@ import logging
 app = Flask(__name__)
 session = Session()
 
-
 logging.basicConfig(level=logging.INFO, filename='./app.log')
 
 
@@ -294,11 +293,35 @@ def update_user_data():
     return jsonify(res)
 
 
+@app.route('/api/search')
+def search():
+    content = request.json
+    if not presence_of_arguments(content, [
+        'login',
+        'token',
+        'value',
+        'search_persons',
+        'search_surveys',
+        'search_friends_surveys',
+        'age_from',
+        'age_to',
+        'count_question_from',
+        'count_question_to'
+    ]):
+        return jsonify({
+            'status': False
+        })
+    if not session.check_auth_token(login=content['login'], token=content['token']):
+        return jsonify({
+            'status': False
+        })
+    res = session.search(content)
+    return jsonify(res)
+
+
 if __name__ == '__main__':
     app.run()
 
 # TODO: /api/user_news_feed POST login, token, friends (LIST<String>), min_count, max_count, is_increasing_most_popular,
 #  is_increasing_active, is_increasing_date - load user news feed
-# TODO: /api/search POST login, token, value, search_persons, search_surveys, search_friends_surveys, age_from, age_to,
-#  count_question_from, count_question_to - search surveys and persons by name
 # TODO: /api/save_res_survey POST login, token, survey {survey_id, spots {spot_id, place}} - save results of survey

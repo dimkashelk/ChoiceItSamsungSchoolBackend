@@ -15,3 +15,4 @@ class Survey(SqlAlchemyBase):
     is_favorites = sqlalchemy.Column(sqlalchemy.BOOLEAN, default=False)
     only_for_friends = sqlalchemy.Column(sqlalchemy.BOOLEAN, default=False)
     to_date = sqlalchemy.Column(sqlalchemy.INTEGER, default=-1)
+    count_spots = sqlalchemy.Column(sqlalchemy.INTEGER, default=0)

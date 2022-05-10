@@ -181,7 +181,8 @@ class Session:
             self.session.commit()
             img_bytes = base64.b64decode(i['image'].encode('utf-8'))
             img = Image.open(io.BytesIO(img_bytes))
-            img.save('C:\\Users\\shelk\\PycharmProjects\\ChoiceItSamsungSchoolBackend\\db\\images\\spots\\' + str(spot.id) + '.png')
+            img.save('C:\\Users\\shelk\\PycharmProjects\\ChoiceItSamsungSchoolBackend\\db\\images\\spots\\' + str(
+                spot.id) + '.png')
         return {'status': True}
 
     def check_auth_token(self, login, token):
@@ -196,7 +197,8 @@ class Session:
                 os.remove(f'../db/images/profile/{user.login}.png')
             img_bytes = base64.b64decode(content['new_profile_image'].encode('utf-8'))
             img = Image.open(io.BytesIO(img_bytes))
-            img.save('C:\\Users\\shelk\\PycharmProjects\\ChoiceItSamsungSchoolBackend\\db\\images\\profile\\' + str(user.login) + '.png')
+            img.save('C:\\Users\\shelk\\PycharmProjects\\ChoiceItSamsungSchoolBackend\\db\\images\\profile\\' + str(
+                user.login) + '.png')
         user.login = content['new_login']
         user.first_name = content['first_name']
         user.second_name = content['second_name']
@@ -207,4 +209,58 @@ class Session:
         self.session.commit()
         res['login'] = user.login
         res['token'] = user.token
+        return res
+
+    def search(self, content):
+        res = {
+            'count_surveys': 0,
+            'count_persons': 0,
+            'persons': [],
+            'surveys': []
+        }
+        user = self.session.query(User).filter(User.login == content['login']).first()
+        if content['search_persons']:
+            persons = self.session.query(User).filter(
+                (User.first_name + User.second_name).like(f"%{content['value']}%"),
+                User.age >= content['age_from'],
+                User.age <= content['age_to'])
+            res['count_persons'] = len(persons)
+            for row in persons:
+                res['persons'].append({
+                    'person_id': row.id,
+                    'first_name': row.first_name,
+                    'second_name': row.second_name
+                })
+        if content['search_surveys']:
+            if 'search_friends_surveys' in content:
+                if content['search_friends_surveys']:
+                    friends_list = self.session.query(Friends).filter(Friends.id_first == user.id)
+                    friends_id = [i.id_second for i in friends_list]
+                    friends = self.session.query(User).filter(User.id.in_(friends_id))
+                    surveys = self.session.query(Survey).filter(
+                        Survey.title.like(f"%{content['value']}%"),
+                        Survey.count_spots >= content['count_question_from'],
+                        Survey.count_spots <= content['count_question_to'],
+                        Survey.create_by.in_([i.id for i in friends])
+                    )
+                else:
+                    surveys = self.session.query(Survey).filter(
+                        Survey.title.like(f"%{content['value']}%"),
+                        Survey.count_spots >= content['count_question_from'],
+                        Survey.count_spots <= content['count_question_to'],
+                    )
+            else:
+                surveys = self.session.query(Survey).filter(
+                    Survey.title.like(f"%{content['value']}%"),
+                    Survey.count_spots >= content['count_question_from'],
+                    Survey.count_spots <= content['count_question_to'],
+                )
+            res['count_surveys'] = len(surveys)
+            for row in surveys:
+                res['surveys'].append({
+                    'survey_id': row.id,
+                    'title': row.title,
+                    'description': row.description,
+                    'person_url': row.create_by
+                })
         return res

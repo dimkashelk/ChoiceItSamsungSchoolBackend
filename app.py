@@ -6,7 +6,7 @@ app = Flask(__name__)
 session = Session()
 
 
-# logging.basicConfig(level=logging.INFO, filename='./app.log')
+logging.basicConfig(level=logging.INFO, filename='./app.log')
 
 
 def presence_of_arguments(content, args):
@@ -126,7 +126,7 @@ def load_friends():
         return jsonify({
             'status': False
         })
-    if not session.check_token(login=content['login'], token=content['token']):
+    if not session.check_auth_token(login=content['login'], token=content['token']):
         return jsonify({
             'status': False
         })
@@ -141,7 +141,7 @@ def load_user_info():
         return jsonify({
             'status': False
         })
-    if not session.check_token(login=content['login'], token=content['token']):
+    if not session.check_auth_token(login=content['login'], token=content['token']):
         return jsonify({
             'status': False
         })
@@ -156,7 +156,7 @@ def load_person():
         return jsonify({
             'status': False
         })
-    if not session.check_token(login=content['login'], token=content['token']):
+    if not session.check_auth_token(login=content['login'], token=content['token']):
         return jsonify({
             'status': False
         })
@@ -171,7 +171,7 @@ def load_search_person():
         return jsonify({
             'status': False
         })
-    if not session.check_token(login=content['login'], token=content['token']):
+    if not session.check_auth_token(login=content['login'], token=content['token']):
         return jsonify({
             'status': False
         })
@@ -186,7 +186,7 @@ def load_person_image(person_id):
         return jsonify({
             'status': False
         })
-    if not session.check_token(login=content['login'], token=content['token']):
+    if not session.check_auth_token(login=content['login'], token=content['token']):
         return jsonify({
             'status': False
         })
@@ -205,7 +205,7 @@ def load_survey_image(survey_id):
         return jsonify({
             'status': False
         })
-    if not session.check_token(login=content['login'], token=content['token']):
+    if not session.check_auth_token(login=content['login'], token=content['token']):
         return jsonify({
             'status': False
         })
@@ -224,7 +224,7 @@ def load_image(person_id):
         return jsonify({
             'status': False
         })
-    if not session.check_token(login=content['login'], token=content['token']):
+    if not session.check_auth_token(login=content['login'], token=content['token']):
         return jsonify({
             'status': False
         })
@@ -243,7 +243,7 @@ def load_survey_image_(survey_id):
         return jsonify({
             'status': False
         })
-    if not session.check_token(login=content['login'], token=content['token']):
+    if not session.check_auth_token(login=content['login'], token=content['token']):
         return jsonify({
             'status': False
         })

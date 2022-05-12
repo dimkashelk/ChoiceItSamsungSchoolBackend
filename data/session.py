@@ -279,3 +279,12 @@ class Session:
             self.session.query(dop_spot).update(dop_spot)
             self.session.commit()
         return {'status': True}
+
+    def add_to_friends(self, user_login, person_id):
+        user = self.session.query(User).filter(User.login == user_login).first()
+        person = self.session.query(User).filter(User.id == person_id).first()
+        friends = Friends()
+        friends.id_first = user.id
+        friends.id_second = person.id
+        self.session.add(friends)
+        self.session.commit()

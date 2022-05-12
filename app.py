@@ -337,9 +337,28 @@ def save_res_survey():
     res = session.save_res_survey(content)
     return jsonify(res)
 
+
+@app.route('/api/add_to_friends', methods=['POST'])
+def add_to_friends():
+    content = request.json
+    if not presence_of_arguments(content, [
+        'login',
+        'token',
+        'person_id'
+    ]):
+        return jsonify({
+            'status': False
+        })
+    if not session.check_auth_token(login=content['login'], token=content['token']):
+        return jsonify({
+            'status': False
+        })
+    res = session.add_to_friends(content['login'], content['person_id'])
+    return jsonify(res)
+
+
 if __name__ == '__main__':
     app.run()
 
 # TODO: /api/user_news_feed POST login, token, friends (LIST<String>), min_count, max_count, is_increasing_most_popular,
 #  is_increasing_active, is_increasing_date - load user news feed
-# TODO: /api/save_res_survey POST login, token, survey {survey_id, spots {spot_id, place}} - save results of survey

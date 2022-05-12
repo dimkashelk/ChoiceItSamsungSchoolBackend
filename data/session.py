@@ -264,3 +264,18 @@ class Session:
                     'person_url': row.create_by
                 })
         return res
+
+    def save_res_survey(self, content):
+        survey = self.session.query(Survey).filter(Survey.id == content['survey']['survey_id']).first()
+        survey.count_res += 1
+        self.session.query(Survey).update(survey)
+        self.session.commit()
+        count_place = len(set(i['place'] for i in content['survey']['spots']))
+        for spot in content['survey']['spots']:
+            spot['place'] = count_place + 1 - spot['place']
+        for spot in content['survey']['spots']:
+            dop_spot = self.session.query(Spot).filter(Spot.id == spot['id']).first()
+            dop_spot.count_voice += spot['place']
+            self.session.query(dop_spot).update(dop_spot)
+            self.session.commit()
+        return {'status': True}

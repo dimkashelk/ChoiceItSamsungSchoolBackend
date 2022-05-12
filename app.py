@@ -319,6 +319,24 @@ def search():
     return jsonify(res)
 
 
+@app.route('/api/save_res_survey', methods=['POST'])
+def save_res_survey():
+    content = request.json
+    if not presence_of_arguments(content, [
+        'login',
+        'token',
+        'survey'
+    ]):
+        return jsonify({
+            'status': False
+        })
+    if not session.check_auth_token(login=content['login'], token=content['token']):
+        return jsonify({
+            'status': False
+        })
+    res = session.save_res_survey(content)
+    return jsonify(res)
+
 if __name__ == '__main__':
     app.run()
 

@@ -357,6 +357,25 @@ def add_to_friends():
     return jsonify(res)
 
 
+@app.route('/api/remove_friend', methods=['POST'])
+def add_to_friends():
+    content = request.json
+    if not presence_of_arguments(content, [
+        'login',
+        'token',
+        'person_id'
+    ]):
+        return jsonify({
+            'status': False
+        })
+    if not session.check_auth_token(login=content['login'], token=content['token']):
+        return jsonify({
+            'status': False
+        })
+    res = session.remove_friend(content['login'], content['person_id'])
+    return jsonify(res)
+
+
 if __name__ == '__main__':
     app.run()
 

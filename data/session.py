@@ -288,3 +288,10 @@ class Session:
         friends.id_second = person.id
         self.session.add(friends)
         self.session.commit()
+
+    def remove_friend(self, user_login, person_id):
+        user = self.session.query(User).filter(User.login == user_login).first()
+        person = self.session.query(User).filter(User.id == person_id).first()
+        self.session.query(Friends).filter(Friends.id_first == user.id, Friends.id_second == person.id).delete()
+        self.session.commit()
+        return {'status': True}

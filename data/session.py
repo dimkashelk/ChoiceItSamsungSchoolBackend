@@ -1,3 +1,4 @@
+import datetime
 import io
 import os
 
@@ -172,6 +173,7 @@ class Session:
         survey.is_favorites = content['add_to_favorites']
         survey.only_for_friends = content['only_for_friends']
         survey.to_date = content['to_date']
+        survey.create_date = int(datetime.datetime.now().timestamp())
         self.session.add(survey)
         self.session.commit()
         for i in content['images']:
@@ -303,24 +305,48 @@ class Session:
         self.session.commit()
         return {'status': True}
 
-    # def load_news_feed(self,
-    #                    login,
-    #                    friends,
-    #                    min_count,
-    #                    max_count,
-    #                    is_increasing_most_popular,
-    #                    is_increasing_active,
-    #                    is_increasing_date):
-    #     res = {
-    #         'news': [],
-    #         'count': 0
-    #     }
-    #     if friends.size() > 0:
-    #         d = list(map(int, friends))
-    #         surveys = self.session.query(Survey).filter(Survey.create_by.in_(d))
-    #     else:
-    #         surveys = self.session.query(Survey).all()
-    #     filtered_by_count_questions_surveys = []
-    #     for row in surveys:
-    #         if min_count <= row.count_spots - (row.count_spots + 1) % 2 <= max_count:
-    #             filtered_by_count_questions_surveys.append(row)
+    def load_news_feed(self,
+                       login,
+                       friends,
+                       min_count,
+                       max_count,
+                       sort_most_popular,
+                       sort_date,
+                       decreasing):
+        user = self.session.query(User).filter(User.login == login).first()
+        res = {
+            'news': [],
+            'count': 0
+        }
+        max_count_surveys = 100
+        if friends.size() > 0:
+            d = list(map(int, friends))
+            surveys = self.session.query(Survey).filter(Survey.create_by.in_(d))
+        else:
+            surveys = self.session.query(Survey).all()
+        filtered_surveys = []
+        survey_which_user_completed = self.session.query(Result.id_survey).filter(Result.id_user == user.id)
+        for row in surveys:
+            if min_count <= row.count_spots - (row.count_spots + 1) % 2 <= max_count and \
+                    row.id not in survey_which_user_completed:
+                filtered_surveys.append(row)
+        if sort_most_popular:
+            survey_id = [row.id for row in filtered_surveys]
+            results = self.session.query(Result).filter(Result.id_survey.in_(survey_id))
+            most_popular = {}
+            for row in results:
+                most_popular[row.id_survey] = most_popular.get(row.id_survey, 0) + 1
+            filtered_surveys.sort(key=lambda x: most_popular[x.id], reverse=decreasing)
+        elif sort_date:
+            filtered_surveys.sort(key=lambda x: x.create_date, reverse=decreasing)
+        surveys_to_send = filtered_surveys[:max_count_surveys]
+        for survey in surveys_to_send:
+            res['news'].append({
+                'id': survey.id,
+                'title': survey.title,
+                'description': survey.description,
+                'title_image_url': '',
+                'person_url': survey.create_by
+            })
+        res['count'] = len(res['news'])
+        return res

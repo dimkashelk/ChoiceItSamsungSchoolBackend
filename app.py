@@ -376,8 +376,37 @@ def add_to_friends():
     return jsonify(res)
 
 
+@app.route('/api/user_news_feed', methods=['POST'])
+def user_news_feed():
+    content = request.json
+    if not presence_of_arguments(content, [
+        'login',
+        'token',
+        'friends',
+        'min_count',
+        'max_count',
+        'sort_most_popular',
+        'sort_date',
+        'decreasing'
+    ]):
+        return jsonify({
+            'status': False
+        })
+    if not session.check_auth_token(login=content['login'], token=content['token']):
+        return jsonify({
+            'status': False
+        })
+    res = session.load_news_feed(
+        login=content['login'],
+        friends=content['friends'],
+        min_count=content['min_count'],
+        max_count=content['max_count'],
+        sort_most_popular=content['sort_most_popular'],
+        sort_date=content['sort_date'],
+        decreasing=content['decreasing']
+    )
+    return jsonify(res)
+
+
 if __name__ == '__main__':
     app.run()
-
-# TODO: /api/user_news_feed POST login, token, friends (LIST<String>), min_count, max_count, is_increasing_most_popular,
-#  is_increasing_active, is_increasing_date - load user news feed

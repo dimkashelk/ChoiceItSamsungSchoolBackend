@@ -11,6 +11,7 @@ class Survey(SqlAlchemyBase):
     title = sqlalchemy.Column(sqlalchemy.String)
     description = sqlalchemy.Column(sqlalchemy.String)
     create_by = sqlalchemy.Column(sqlalchemy.INTEGER, ForeignKey("user.id"))
+    create_date = sqlalchemy.Column(sqlalchemy.INTEGER)
     is_archive = sqlalchemy.Column(sqlalchemy.BOOLEAN, default=False)
     is_favorites = sqlalchemy.Column(sqlalchemy.BOOLEAN, default=False)
     only_for_friends = sqlalchemy.Column(sqlalchemy.BOOLEAN, default=False)

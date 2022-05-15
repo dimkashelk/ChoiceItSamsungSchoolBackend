@@ -12,6 +12,7 @@ from data.user import User
 from data.friends_list import Friends
 from data.survey import Survey
 from data.spot import Spot
+from data.results import Result
 
 
 def get_hashed_password(plain_text_password):
@@ -266,6 +267,7 @@ class Session:
         return res
 
     def save_res_survey(self, content):
+        user = self.session.query(User).filter(User.login == content['login']).first()
         survey = self.session.query(Survey).filter(Survey.id == content['survey']['survey_id']).first()
         survey.count_res += 1
         self.session.query(Survey).update(survey)
@@ -278,6 +280,11 @@ class Session:
             dop_spot.count_voice += spot['place']
             self.session.query(dop_spot).update(dop_spot)
             self.session.commit()
+        res = Result()
+        res.id_user = user.id
+        res.id_survey = survey.id
+        self.session.add(res)
+        self.session.commit()
         return {'status': True}
 
     def add_to_friends(self, user_login, person_id):
@@ -295,3 +302,25 @@ class Session:
         self.session.query(Friends).filter(Friends.id_first == user.id, Friends.id_second == person.id).delete()
         self.session.commit()
         return {'status': True}
+
+    # def load_news_feed(self,
+    #                    login,
+    #                    friends,
+    #                    min_count,
+    #                    max_count,
+    #                    is_increasing_most_popular,
+    #                    is_increasing_active,
+    #                    is_increasing_date):
+    #     res = {
+    #         'news': [],
+    #         'count': 0
+    #     }
+    #     if friends.size() > 0:
+    #         d = list(map(int, friends))
+    #         surveys = self.session.query(Survey).filter(Survey.create_by.in_(d))
+    #     else:
+    #         surveys = self.session.query(Survey).all()
+    #     filtered_by_count_questions_surveys = []
+    #     for row in surveys:
+    #         if min_count <= row.count_spots - (row.count_spots + 1) % 2 <= max_count:
+    #             filtered_by_count_questions_surveys.append(row)

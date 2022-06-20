@@ -129,8 +129,11 @@ class Session:
         return res
 
     def load_user_info(self, login):
-        res = {}
+        res = {'status': True}
         user = self.session.query(User).filter(User.login == login).first()
+        if user == None:
+            res['status'] = False
+            return res
         friends = self.session.query(Friends).filter(Friends.id_first == user.id)
         surveys = self.session.query(Survey).filter(Survey.create_by == user.id)
         res['id'] = user.id
@@ -142,8 +145,11 @@ class Session:
         return res
 
     def load_person(self, person_id):
-        res = {}
+        res = {'status': False}
         user = self.session.query(User).filter(User.id == person_id).first()
+        if user == None:
+            res['status'] = True
+            return res
         friends = self.session.query(Friends).filter(Friends.id_first == user.id)
         surveys = self.session.query(Survey).filter(Survey.create_by == user.id)
         res['id'] = user.id

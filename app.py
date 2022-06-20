@@ -41,11 +41,13 @@ def check_email():
 @app.route('/api/auth', methods=['POST', 'GET'])
 def check_data():
     content = request.json
-    if presence_of_arguments(content, ['email']):
-        print(f"GETTING email: {content['email']} password: {content['password']} TO CHECKING AUTH")
+    if presence_of_arguments(content, ['login', 'token']):
+        return jsonify({
+            'ok': session.check_auth_token(content['login'], content['token'])
+        })
+    elif presence_of_arguments(content, ['email', 'password']):
         res = session.authorization(content['email'], content['password'])
-    elif presence_of_arguments(content, ['login']):
-        print(f"GETTING login: {content['login']} password: {content['password']} TO CHECKING AUTH")
+    elif presence_of_arguments(content, ['login', 'password']):
         res = session.authorization(content['login'], content['password'])
     else:
         return jsonify({'status': False})
@@ -293,7 +295,7 @@ def update_user_data():
     return jsonify(res)
 
 
-@app.route('/api/search')
+@app.route('/api/search', methods=['POST'])
 def search():
     content = request.json
     if not presence_of_arguments(content, [

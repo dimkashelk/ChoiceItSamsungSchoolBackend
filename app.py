@@ -5,13 +5,16 @@ import logging
 app = Flask(__name__)
 session = Session()
 
-logging.basicConfig(level=logging.INFO, filename='./app.log')
+logging.basicConfig(level=logging.INFO, filename='/var/log/choiceit/app.log')
 
 
 def presence_of_arguments(content, args):
-    for i in args:
-        if i not in content:
-            return False
+    try:
+        for i in args:
+            if i not in content:
+                return False
+    except BaseException:
+        return False
     return True
 
 
@@ -360,7 +363,7 @@ def add_to_friends():
 
 
 @app.route('/api/remove_friend', methods=['POST'])
-def add_to_friends():
+def remove_friends():
     content = request.json
     if not presence_of_arguments(content, [
         'login',

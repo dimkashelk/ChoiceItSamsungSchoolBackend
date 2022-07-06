@@ -8,7 +8,6 @@ class User(SqlAlchemyBase):
     id = sqlalchemy.Column(sqlalchemy.INTEGER, autoincrement=True, primary_key=True)
     login = sqlalchemy.Column(sqlalchemy.String, unique=True)
     email = sqlalchemy.Column(sqlalchemy.String, unique=True)
-    age = sqlalchemy.Column(sqlalchemy.INTEGER, default=0)
     first_name = sqlalchemy.Column(sqlalchemy.String)
     second_name = sqlalchemy.Column(sqlalchemy.String)
     verify_code = sqlalchemy.Column(sqlalchemy.INTEGER)

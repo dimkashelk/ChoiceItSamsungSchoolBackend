@@ -32,7 +32,7 @@ def random_word(length):
 class Session:
 
     def __init__(self):
-        db_session.global_init('C:\\Users\\shelk\\PycharmProjects\\ChoiceItSamsungSchoolBackend\\db\\db.db')
+        db_session.global_init('/home/dimkashelk/ChoiceItSamsungSchoolBackend/db/db.db')
         self.session = db_session.create_session()
 
     def check_login_free(self, login) -> bool:
@@ -112,7 +112,7 @@ class Session:
         res = {}
         user = self.session.query(User).filter(User.login == login).first()
         friends = self.session.query(Friends).filter(Friends.id_first == user.id)
-        res['count'] = len(friends)
+        res['count'] = friends.count()
         res['friends'] = []
         for row in friends:
             c_user = self.session.query(User).filter(User.id == row.id_first).first()
@@ -123,8 +123,8 @@ class Session:
                 'first_name': c_user.first_name,
                 'second_name': c_user.second_name,
                 'age': 0,
-                'count_surveys': len(count_surveys),
-                'count_friends': len(count_friends)
+                'count_surveys': count_surveys.count(),
+                'count_friends': count_friends.count()
             })
         return res
 
@@ -140,8 +140,8 @@ class Session:
         res['login'] = user.login
         res['first_name'] = user.first_name
         res['second_name'] = user.second_name
-        res['count_friends'] = len(friends)
-        res['count_surveys'] = len(surveys)
+        res['count_friends'] = friends.count()
+        res['count_surveys'] = surveys.count()
         return res
 
     def load_person(self, person_id):
@@ -156,14 +156,14 @@ class Session:
         res['login'] = user.login
         res['first_name'] = user.first_name
         res['second_name'] = user.second_name
-        res['count_friends'] = len(friends)
-        res['count_surveys'] = len(surveys)
+        res['count_friends'] = friends.count()
+        res['count_surveys'] = surveys.count()
         return res
 
     def load_search_person(self, person_name):
         res = {}
         users = self.session.query(User).filter((User.first_name + User.second_name).like(f'%{person_name}%'))
-        res['count'] = len(users)
+        res['count'] = users.count()
         res['persons'] = []
         for row in users:
             res['persons'].append(self.load_person(row.id))

@@ -1,6 +1,6 @@
-Flask~=2.1.2
-sqlalchemy~=1.4.36
-bcrypt~=3.2.2
-numpy~=1.22.3
-opencv-python~=4.5.5.64
-Pillow~=9.2.0
+Flask
+sqlalchemy
+bcrypt
+numpy
+opencv-python
+Pillow

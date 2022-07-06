@@ -324,8 +324,9 @@ class Session:
             'news': [],
             'count': 0
         }
+        friends = list(friends.split(','))
         max_count_surveys = 100
-        if friends.size() > 0:
+        if len(friends) > 0:
             d = list(map(int, friends))
             surveys = self.session.query(Survey).filter(Survey.create_by.in_(d))
         else:

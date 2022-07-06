@@ -251,7 +251,7 @@ def user_surveys():
         return jsonify({
             'status': False
         })
-    return session.user_surveys(content['login'])
+    return jsonify(session.user_surveys(content['login']))
 
 
 @app.route('/api/load_survey/<int:survey_id>', methods=['POST'])

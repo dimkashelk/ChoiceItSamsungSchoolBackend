@@ -240,6 +240,20 @@ def load_image(person_id):
     )
 
 
+@app.route('/api/user_surveys', methods=['POST'])
+def user_surveys():
+    content = request.json
+    if not presence_of_arguments(content, ['login', 'token']):
+        return jsonify({
+            'status': False
+        })
+    if not session.check_auth_token(login=content['login'], token=content['token']):
+        return jsonify({
+            'status': False
+        })
+    return session.user_surveys()
+
+
 @app.route('/api/load_survey/<int:survey_id>', methods=['POST'])
 def load_survey_image_(survey_id):
     content = request.json

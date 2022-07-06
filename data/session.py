@@ -356,3 +356,23 @@ class Session:
             })
         res['count'] = len(res['news'])
         return res
+
+    def user_surveys(self, login):
+        user = self.session.query(User).filter(User.login == login).first()
+        res = {
+            'surveys': [],
+            'count': 0
+        }
+        surveys = self.session.query(Survey).filter(Survey.create_by == user.id).all()
+        res['count'] = len(surveys)
+        for survey in surveys:
+            res['surveys'].append({
+                'id': survey.id,
+                'title': survey.title,
+                'description': survey.description,
+                'title_image_url': '',
+                'person_url': survey.create_by,
+                'is_archive': survey.is_archive,
+                'is_favorite': survey.is_favorites
+            })
+        return res

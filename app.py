@@ -423,12 +423,13 @@ def user_news_feed():
     return jsonify(res)
 
 
-@app.route('/api/images/survey_title/<int:survey_id>')
-def load_survey_title(survey_id):
+@app.route('/api/images/survey_title', methods=['POST'])
+def load_survey_title():
     content = request.json
     if not presence_of_arguments(content, [
         'login',
-        'token'
+        'token',
+        'survey_id'
     ]):
         return jsonify({
             'status': False
@@ -437,7 +438,7 @@ def load_survey_title(survey_id):
         return jsonify({
             'status': False
         })
-    return jsonify(session.load_survey_title_image(survey_id))
+    return jsonify(session.load_survey_title_image(content['survey_id']))
 
 
 if __name__ == '__main__':

@@ -382,6 +382,7 @@ class Session:
     def load_survey_title_image(self, survey_id):
         spots = self.session.query(Spot).filter(Spot.id_survey == survey_id).all()
         title_spot = spots[0]
-        with open(self.__home_dir__ + f'db/images/spots/{title_spot.id}.png', 'rb') as image_file:
+        # C:\Users\notebook\Documents\GitHub\ChoiceItSamsungSchoolBackend\db\images\spots
+        with open('C:\\Users\\notebook\\Documents\\GitHub\\ChoiceItSamsungSchoolBackend\\' + f'db/images/spots/{title_spot.id}.png', 'rb') as image_file:
             image = base64.b64encode(image_file.read()).decode()
         return {'image': image}

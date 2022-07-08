@@ -325,6 +325,7 @@ class Session:
             'count': 0
         }
         friends = list(friends.split(','))
+        friends = list(filter(lambda x: x.isdigit(), friends))
         max_count_surveys = 100
         if len(friends) > 0:
             d = list(map(int, friends))

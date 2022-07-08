@@ -441,5 +441,23 @@ def load_survey_title():
     return jsonify(session.load_survey_title_image(content['survey_id']))
 
 
+@app.route('/api/images/person', methods=['POST'])
+def load_image_person():
+    content = request.json
+    if not presence_of_arguments(content, [
+        'login',
+        'token',
+        'person_id'
+    ]):
+        return jsonify({
+            'status': False
+        })
+    if not session.check_auth_token(login=content['login'], token=content['token']):
+        return jsonify({
+            'status': False
+        })
+    return jsonify(session.load_person_image(content['person_id']))
+
+
 if __name__ == '__main__':
     app.run()

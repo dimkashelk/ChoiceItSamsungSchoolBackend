@@ -30,9 +30,12 @@ def random_word(length):
 
 
 class Session:
+    # C:\\Users\\notebook\\Documents\\GitHub\\ChoiceItSamsungSchoolBackend\\
+    # /home/dimkashelk/ChoiceItSamsungSchoolBackend/
+    __home_dir__ = "C:\\Users\\notebook\\Documents\\GitHub\\ChoiceItSamsungSchoolBackend\\"
 
     def __init__(self):
-        db_session.global_init('/home/dimkashelk/ChoiceItSamsungSchoolBackend/db/db.db')
+        db_session.global_init(self.__home_dir__ + 'db/db.db')
         self.session = db_session.create_session()
 
     def check_login_free(self, login) -> bool:
@@ -180,6 +183,7 @@ class Session:
         survey.only_for_friends = content['only_for_friends']
         survey.to_date = content['to_date']
         survey.create_date = int(datetime.datetime.now().timestamp())
+        survey.count_spots = len(content['images'])
         self.session.add(survey)
         self.session.commit()
         for i in content['images']:
@@ -190,8 +194,7 @@ class Session:
             self.session.commit()
             img_bytes = base64.b64decode(i['image'].encode('utf-8'))
             img = Image.open(io.BytesIO(img_bytes))
-            img.save('C:\\Users\\shelk\\PycharmProjects\\ChoiceItSamsungSchoolBackend\\db\\images\\spots\\' + str(
-                spot.id) + '.png')
+            img.save(self.__home_dir__ + 'db/images/spots/' + str(spot.id) + '.png')
         return {'status': True}
 
     def check_auth_token(self, login, token):
@@ -202,12 +205,11 @@ class Session:
         res = {}
         user = self.session.query(User).filter(User.login == content['login']).first()
         if 'new_profile_image' in content:
-            if os.path.isfile(f'../db/images/profile/{user.login}.png'):
-                os.remove(f'../db/images/profile/{user.login}.png')
+            if os.path.isfile(self.__home_dir__ + f'db/images/profiles/{user.login}.png'):
+                os.remove(self.__home_dir__ + f'db/images/profiles/{user.login}.png')
             img_bytes = base64.b64decode(content['new_profile_image'].encode('utf-8'))
             img = Image.open(io.BytesIO(img_bytes))
-            img.save('C:\\Users\\shelk\\PycharmProjects\\ChoiceItSamsungSchoolBackend\\db\\images\\profile\\' + str(
-                user.login) + '.png')
+            img.save(self.__home_dir__ + 'db/images/profiles/' + str(user.login) + '.png')
         user.login = content['new_login']
         user.first_name = content['first_name']
         user.second_name = content['second_name']
@@ -324,8 +326,6 @@ class Session:
             'news': [],
             'count': 0
         }
-        friends = list(friends.split(','))
-        friends = list(filter(lambda x: x.isdigit(), friends))
         max_count_surveys = 100
         if len(friends) > 0:
             d = list(map(int, friends))
@@ -378,3 +378,10 @@ class Session:
                 'is_favorite': survey.is_favorites
             })
         return res
+
+    def load_survey_title_image(self, survey_id):
+        spots = self.session.query(Spot).filter(Spot.id_survey == survey_id).all()
+        title_spot = spots[0]
+        with open(self.__home_dir__ + f'db/images/spots/{title_spot.id}.png', 'rb') as image_file:
+            image = base64.b64encode(image_file.read()).decode()
+        return {'image': image}

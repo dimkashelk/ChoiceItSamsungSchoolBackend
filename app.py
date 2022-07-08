@@ -5,6 +5,7 @@ import logging
 app = Flask(__name__)
 session = Session()
 
+
 # logging.basicConfig(level=logging.INFO, filename='/var/log/choiceit/app.log')
 
 
@@ -265,12 +266,7 @@ def load_survey_image_(survey_id):
         return jsonify({
             'status': False
         })
-    return send_from_directory(
-        './db/images/survey/',
-        f'{survey_id}' + '_title.png',
-        as_attachment=True,
-        attachment_filename='title.png'
-    )
+    return jsonify(session.load_survey_title_image(survey_id))
 
 
 @app.route('/api/upload_survey', methods=['POST'])
@@ -425,6 +421,23 @@ def user_news_feed():
         decreasing=content['decreasing']
     )
     return jsonify(res)
+
+
+@app.route('/api/images/survey_title/<int:survey_id>')
+def load_survey_title(survey_id):
+    content = request.json
+    if not presence_of_arguments(content, [
+        'login',
+        'token'
+    ]):
+        return jsonify({
+            'status': False
+        })
+    if not session.check_auth_token(login=content['login'], token=content['token']):
+        return jsonify({
+            'status': False
+        })
+    return jsonify(session.load_survey_title_image(survey_id))
 
 
 if __name__ == '__main__':

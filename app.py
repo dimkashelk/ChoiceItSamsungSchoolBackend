@@ -5,7 +5,7 @@ import logging
 app = Flask(__name__)
 session = Session()
 
-logging.basicConfig(level=logging.INFO, filename='/var/log/choiceit/app.log')
+# logging.basicConfig(level=logging.INFO, filename='/var/log/choiceit/app.log')
 
 
 def presence_of_arguments(content, args):
@@ -119,7 +119,7 @@ def reg():
         })
     return jsonify({
         'status': True,
-        'token': res[0]
+        'token': str(res[0])
     })
 
 

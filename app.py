@@ -253,7 +253,7 @@ def user_surveys():
         return jsonify({
             'status': False
         })
-    return jsonify(session.user_surveys(content['login']))
+    return jsonify(session.user_surveys(content['login']) + {'status': True})
 
 
 @app.route('/api/load_survey', methods=['POST'])
@@ -267,7 +267,7 @@ def load_survey_image_():
         return jsonify({
             'status': False
         })
-    return jsonify(session.load_survey(content['survey_id']))
+    return jsonify(session.load_survey(content['survey_id']) + {'status': True})
 
 
 @app.route('/api/upload_survey', methods=['POST'])
@@ -332,6 +332,7 @@ def search():
             'status': False
         })
     res = session.search(content)
+    res['status'] = True
     return jsonify(res)
 
 

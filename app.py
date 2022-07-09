@@ -75,6 +75,20 @@ def find_email():
         return jsonify({'status': False})
 
 
+@app.route('/api/check_token', methods=['POST'])
+def check_token():
+    content = request.json
+    if not presence_of_arguments(content, ['login', 'token']):
+        return jsonify({
+            'ok': False
+        })
+    if not session.check_auth_token(login=content['login'], token=content['token']):
+        return jsonify({
+            'ok': False
+        })
+    return jsonify({'ok': True})
+
+
 @app.route('/api/check_verify_code', methods=['POST', 'GET'])
 def check_verify_code():
     content = request.json

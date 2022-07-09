@@ -400,3 +400,25 @@ class Session:
             with open(self.__home_dir__ + f'db/images/profiles/default.jpg', 'rb') as image_file:
                 image = base64.b64encode(image_file.read()).decode()
         return {'image': image}
+
+    def load_survey(self, survey_id):
+        res = {}
+        survey = self.session.query(Survey).filter(Survey.id == survey_id).first()
+        res['title'] = survey.title
+        res['description'] = survey.description
+        res['count_spots'] = survey.count_spots
+        res['spots'] = []
+        spots = self.session.query(Spot).filter(Spot.id_survey == survey_id).all()
+        for spot in spots:
+            res['spots'].append({
+                'spot_id': spot.id,
+                'title': spot.title,
+                'count_voice': spot.count_voice,
+                'image': self.spot_image(spot.id)
+            })
+        return res
+
+    def spot_image(self, spot_id):
+        with open(self.__home_dir__ + f"db/images/spots/{spot_id}.png", "rb") as image_file:
+            image = base64.b64encode(image_file.read())
+        return image.decode()

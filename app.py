@@ -255,10 +255,10 @@ def user_surveys():
     return jsonify(session.user_surveys(content['login']))
 
 
-@app.route('/api/load_survey/<int:survey_id>', methods=['POST'])
-def load_survey_image_(survey_id):
+@app.route('/api/load_survey', methods=['POST'])
+def load_survey_image_():
     content = request.json
-    if not presence_of_arguments(content, ['login', 'token']):
+    if not presence_of_arguments(content, ['login', 'token', 'survey_id']):
         return jsonify({
             'status': False
         })
@@ -266,7 +266,7 @@ def load_survey_image_(survey_id):
         return jsonify({
             'status': False
         })
-    return jsonify(session.load_survey_title_image(survey_id))
+    return jsonify(session.load_survey(content['survey_id']))
 
 
 @app.route('/api/upload_survey', methods=['POST'])

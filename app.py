@@ -152,6 +152,7 @@ def load_user_info():
             'status': False
         })
     res = session.load_user_info(content['login'])
+    res['status'] = True
     return jsonify(res)
 
 
@@ -167,6 +168,7 @@ def load_person():
             'status': False
         })
     res = session.load_person(content['person'])
+    res['status'] = True
     return jsonify(res)
 
 
@@ -182,6 +184,7 @@ def load_search_person():
             'status': False
         })
     res = session.load_search_person(content['person'])
+    res['status'] = True
     return jsonify(res)
 
 
@@ -295,6 +298,7 @@ def upload_survey():
             'status': False
         })
     res = session.upload_survey(content)
+    res['status'] = True
     return jsonify(res)
 
 
@@ -310,6 +314,7 @@ def update_user_data():
             'status': False
         })
     res = session.update_user_data(content)
+    res['status'] = True
     return jsonify(res)
 
 
@@ -426,6 +431,7 @@ def user_news_feed():
         sort_date=content['sort_date'],
         decreasing=content['decreasing']
     )
+    res['status'] = True
     return jsonify(res)
 
 

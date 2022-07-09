@@ -32,7 +32,7 @@ def random_word(length):
 class Session:
     # C:\\Users\\notebook\\Documents\\GitHub\\ChoiceItSamsungSchoolBackend\\
     # /home/dimkashelk/ChoiceItSamsungSchoolBackend/
-    __home_dir__ = "C:\\Users\\notebook\\Documents\\GitHub\\ChoiceItSamsungSchoolBackend\\"
+    __home_dir__ = "home/dimkashelk/ChoiceItSamsungSchoolBackend/"
 
     def __init__(self):
         db_session.global_init(self.__home_dir__ + 'db/db.db')

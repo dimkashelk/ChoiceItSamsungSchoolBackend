@@ -136,6 +136,7 @@ def load_friends():
             'status': False
         })
     res = session.load_friends(content['login'])
+    res['status'] = True
     return jsonify(res)
 
 

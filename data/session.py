@@ -89,6 +89,9 @@ class Session:
         user.login = login
         user.first_name = first_name
         user.second_name = second_name
+        user.login_lower = login.lower()
+        user.first_name_lower = first_name.lower()
+        user.second_name_lower = second_name.lower()
         user.password = get_hashed_password(password.encode('utf-8'))
         user.token = get_hashed_password(random_word(20).encode('utf-8') + user.login.encode('utf-8'))
         self.session.add(user)
@@ -153,20 +156,20 @@ class Session:
         if user == None:
             res['status'] = True
             return res
-        friends = self.session.query(Friends).filter(Friends.id_first == user.id)
-        surveys = self.session.query(Survey).filter(Survey.create_by == user.id)
+        friends = self.session.query(Friends).filter(Friends.id_first == user.id).all()
+        surveys = self.session.query(Survey).filter(Survey.create_by == user.id).all()
         res['id'] = user.id
         res['login'] = user.login
         res['first_name'] = user.first_name
         res['second_name'] = user.second_name
-        res['count_friends'] = friends.count()
-        res['count_surveys'] = surveys.count()
+        res['count_friends'] = len(friends)
+        res['count_surveys'] = len(surveys)
         return res
 
     def load_search_person(self, person_name):
         res = {}
-        users = self.session.query(User).filter((User.first_name + User.second_name).like(f'%{person_name}%'))
-        res['count'] = users.count()
+        users = self.session.query(User).filter((User.first_name + User.second_name).like(f'%{person_name}%')).all()
+        res['count'] = len(users)
         res['persons'] = []
         for row in users:
             res['persons'].append(self.load_person(row.id))
@@ -178,6 +181,8 @@ class Session:
         survey.create_by = user.id
         survey.title = content['title']
         survey.description = content['description']
+        survey.title_lower = content['title'].lower()
+        survey.description_lower = content['description'].lower()
         survey.is_archive = False
         survey.is_favorites = content['add_to_favorites']
         survey.only_for_friends = content['only_for_friends']
@@ -232,9 +237,9 @@ class Session:
         user = self.session.query(User).filter(User.login == content['login']).first()
         if content['search_persons']:
             persons = self.session.query(User).filter(
-                (User.first_name + User.second_name).like(f"%{content['value']}%"),
+                (User.first_name_lower + User.second_name_lower).like(f"%{content['value']}%".lower()),
                 User.age >= content['age_from'],
-                User.age <= content['age_to'])
+                User.age <= content['age_to']).all()
             res['count_persons'] = len(persons)
             for row in persons:
                 res['persons'].append({
@@ -245,27 +250,27 @@ class Session:
         if content['search_surveys']:
             if 'search_friends_surveys' in content:
                 if content['search_friends_surveys']:
-                    friends_list = self.session.query(Friends).filter(Friends.id_first == user.id)
+                    friends_list = self.session.query(Friends).filter(Friends.id_first == user.id).all()
                     friends_id = [i.id_second for i in friends_list]
-                    friends = self.session.query(User).filter(User.id.in_(friends_id))
+                    friends = self.session.query(User).filter(User.id.in_(friends_id)).all()
                     surveys = self.session.query(Survey).filter(
-                        Survey.title.like(f"%{content['value']}%"),
+                        Survey.title_lower.like(f"%{content['value']}%".lower()),
                         Survey.count_spots >= content['count_question_from'],
                         Survey.count_spots <= content['count_question_to'],
                         Survey.create_by.in_([i.id for i in friends])
-                    )
+                    ).all()
                 else:
                     surveys = self.session.query(Survey).filter(
-                        Survey.title.like(f"%{content['value']}%"),
+                        Survey.title_lower.like(f"%{content['value']}%".lower()),
                         Survey.count_spots >= content['count_question_from'],
                         Survey.count_spots <= content['count_question_to'],
-                    )
+                    ).all()
             else:
                 surveys = self.session.query(Survey).filter(
-                    Survey.title.like(f"%{content['value']}%"),
+                    Survey.title_lower.like(f"%{content['value']}%".lower()),
                     Survey.count_spots >= content['count_question_from'],
                     Survey.count_spots <= content['count_question_to'],
-                )
+                ).all()
             res['count_surveys'] = len(surveys)
             for row in surveys:
                 res['surveys'].append({

@@ -9,7 +9,9 @@ class Survey(SqlAlchemyBase):
 
     id = sqlalchemy.Column(sqlalchemy.INTEGER, autoincrement=True, primary_key=True)
     title = sqlalchemy.Column(sqlalchemy.String)
+    title_lower = sqlalchemy.Column(sqlalchemy.String)
     description = sqlalchemy.Column(sqlalchemy.String)
+    description_lower = sqlalchemy.Column(sqlalchemy.String)
     create_by = sqlalchemy.Column(sqlalchemy.INTEGER, ForeignKey("user.id"))
     create_date = sqlalchemy.Column(sqlalchemy.INTEGER)
     is_archive = sqlalchemy.Column(sqlalchemy.BOOLEAN, default=False)

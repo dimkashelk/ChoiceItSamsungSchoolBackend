@@ -32,7 +32,7 @@ def random_word(length):
 class Session:
     # C:\\Users\\notebook\\Documents\\GitHub\\ChoiceItSamsungSchoolBackend\\
     # /home/dimkashelk/ChoiceItSamsungSchoolBackend/
-    __home_dir__ = "home/dimkashelk/ChoiceItSamsungSchoolBackend/"
+    __home_dir__ = "C:\\Users\\notebook\\Documents\\GitHub\\ChoiceItSamsungSchoolBackend\\"
 
     def __init__(self):
         db_session.global_init(self.__home_dir__ + 'db/db.db')
@@ -273,11 +273,12 @@ class Session:
                 ).all()
             res['count_surveys'] = len(surveys)
             for row in surveys:
+                user = self.session.query(User).filter(User.id == row.create_by).first()
                 res['surveys'].append({
                     'survey_id': row.id,
                     'title': row.title,
                     'description': row.description,
-                    'person_url': row.create_by
+                    'person_url': user.login
                 })
         return res
 
@@ -354,12 +355,13 @@ class Session:
             filtered_surveys.sort(key=lambda x: x.create_date, reverse=decreasing)
         surveys_to_send = filtered_surveys[:max_count_surveys]
         for survey in surveys_to_send:
+            user = self.session.query(User).filter(User.id == survey.create_by).first()
             res['news'].append({
                 'id': survey.id,
                 'title': survey.title,
                 'description': survey.description,
                 'title_image_url': '',
-                'person_url': survey.create_by
+                'person_url': user.login
             })
         res['count'] = len(res['news'])
         return res
@@ -373,12 +375,13 @@ class Session:
         surveys = self.session.query(Survey).filter(Survey.create_by == user.id).all()
         res['count'] = len(surveys)
         for survey in surveys:
+            user = self.session.query(User).filter(User.id == survey.create_by).first()
             res['surveys'].append({
                 'id': survey.id,
                 'title': survey.title,
                 'description': survey.description,
                 'title_image_url': '',
-                'person_url': survey.create_by,
+                'person_url': user.login,
                 'is_archive': survey.is_archive,
                 'is_favorite': survey.is_favorites
             })
